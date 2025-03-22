@@ -214,7 +214,7 @@ pieces.on("mouseover", function(event, d) {
         correctPieces++;
         updateScore();
   
-        if (correctPieces === 1) {
+        if (correctPieces === totalPieces2) {
           const defaults = { startVelocity: 40, spread: 300, ticks: 60, zIndex: 1000 };
         
   
