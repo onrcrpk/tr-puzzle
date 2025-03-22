@@ -6,13 +6,27 @@
   <meta name="description" content="Türkiye Puzzle Oyunu - Coğrafya bilginizi interaktif ve eğlenceli bir şekilde test edin.">
   <title>Türkiye Puzzle Oyunu</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="game-container">
-    <h1 class="game-title">🧩 Türkiye Puzzle Oyunu 🇹🇷</h1>
+    <h1 class="game-title"> Türkiye Puzzle 🧩</h1>
     <div id="map-container"></div>
+    <div class="score-container">
+      <span id="score">0 / 81</span>
+    </div>
   </div>
+  
+  <div id="congrats-overlay" class="overlay hidden">
+    <div class="congrats-content">
+      <h2>Tebrikler!</h2>
+      <p>Tüm şehirleri doğru yerleştirdiniz!</p>
+      <button id="restart-btn">Yeniden Başlat</button>
+    </div>
+  </div>
+  
 
   <!-- D3.js CDN -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
