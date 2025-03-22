@@ -15,10 +15,18 @@ body {
   }
   
   .game-title {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
     color: #333;
     letter-spacing: 1px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .score-container {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2a9d8f;
+    margin-bottom: 10px;
   }
   
   /* Responsive map-container: oranı koruyarak tam genişlikte */
@@ -34,12 +42,70 @@ body {
     overflow: hidden;
   }
   
-  @media (max-width: 768px) {
-    .game-title {
-      font-size: 2rem;
-    }
-    #map-container {
-      border-width: 2px;
-    }
+  .score-container {
+    margin-top: 10px;
+    text-align: center;
   }
   
+  
+  #score {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2a9d8f;
+    background-color: #f7f6f3;
+    padding: 8px 16px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .overlay.hidden {
+    display: none;
+  }
+  
+
+.congrats-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.congrats-content h2 {
+  margin-top: 0;
+  color: #2a9d8f;
+}
+
+.congrats-content p {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 20px 0;
+}
+
+#restart-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #2a9d8f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#restart-btn:hover {
+  background-color: #21867a;
+}
