@@ -8,12 +8,10 @@ const svg = d3.select("#map-container")
   .attr("height", height)
   .style("overflow", "hidden");
 
-// Çerçeve ayarları
 const frameMargin = 10;
 const frameWidth = width - frameMargin * 2;
 const frameHeight = height - frameMargin * 2;
 
-// Profesyonel görünüm için kırmızı çerçeve
 svg.append("rect")
   .attr("x", frameMargin)
   .attr("y", frameMargin)
@@ -24,7 +22,6 @@ svg.append("rect")
   .attr("stroke-width", 5)
   .attr("rx", 8);
 
-// Harita projeksiyonu ayarları
 const projection = d3.geoMercator()
   .center([35, 39])
   .scale(3000)
@@ -32,7 +29,6 @@ const projection = d3.geoMercator()
 
 const path = d3.geoPath().projection(projection);
 
-// GeoJSON verisini yükle
 d3.json("turkiye.geojson").then(data => {
   
   // Temel il sınırları
@@ -45,7 +41,6 @@ d3.json("turkiye.geojson").then(data => {
     .attr("fill", "#f0f0f0")
     .attr("stroke", "#bbb");
 
-  // İl isimlerini ekle
   svg.selectAll(".province-label")
     .data(data.features)
     .enter()
@@ -60,7 +55,6 @@ d3.json("turkiye.geojson").then(data => {
     .style("pointer-events", "none")
     .style("user-select", "none");
 
-  // Parçaları karıştır ve ekle
   const shuffledData = data.features.sort(() => Math.random() - 0.5);
   const pieces = svg.selectAll(".piece")
     .data(shuffledData)
@@ -112,24 +106,24 @@ d3.json("turkiye.geojson").then(data => {
       .style("filter", "drop-shadow(0px 1px 2px rgba(0,0,0,0.2))");
   });
 
-  // Sürükleme olayları ve animasyon
+
   let offsetX, offsetY;
   const snapDistance = 20;
   let correctPieces = 0;
-  const totalPieces2 = 81; // Türkiye'de 81 il var
+  const totalPieces2 = 81;
   
   function updateScore() {
     document.getElementById('score').textContent = `${correctPieces} / ${totalPieces2}`;
   }
 
   
-// Puzzle parçaları için hover efekti ekleme
+
 pieces.on("mouseover", function(event, d) {
   if (!d3.select(this).classed("fixed")) {
     d3.select(this).select("path")
       .transition()
       .duration(100)
-      .attr("fill", "#d1e8e2");  // Hover rengi
+      .attr("fill", "#d1e8e2");  
   }
 })
 .on("mouseout", function(event, d) {
@@ -137,7 +131,7 @@ pieces.on("mouseover", function(event, d) {
     d3.select(this).select("path")
       .transition()
       .duration(100)
-      .attr("fill", "#ccc");  // Orijinal renk
+      .attr("fill", "#ccc"); 
   }
 });
 
@@ -166,21 +160,17 @@ pieces.on("mouseover", function(event, d) {
       let newX = event.sourceEvent.clientX - offsetX;
       let newY = event.sourceEvent.clientY - offsetY;
     
-      // Parça orijinal olarak centroid'e göre merkezlenmişti, bunu dikkate alarak offset'i ayarla
       const offsetXCentroid = pieceWidth / 2;
       const offsetYCentroid = pieceHeight / 2;
     
-      // Çerçeve sınırlarını hesapla (hassas sınırlandırma)
       const minX = frameMargin + offsetXCentroid;
       const minY = frameMargin + offsetYCentroid;
       const maxX = frameMargin + frameWidth - offsetXCentroid;
       const maxY = frameMargin + frameHeight - offsetYCentroid;
     
-      // Sınırlar dışına çıkmasını önle
       newX = Math.max(minX, Math.min(maxX, newX));
       newY = Math.max(minY, Math.min(maxY, newY));
     
-      // Yeni transform değerini uygula
       d3.select(this).attr("transform", `translate(${newX}, ${newY})`);
     })
     
@@ -221,24 +211,23 @@ pieces.on("mouseover", function(event, d) {
           .style("stroke", "#000")
           .style("stroke-width", "1px");
   
-        // ✅ Doğru parça yerine oturunca sayaç artıyor
         correctPieces++;
         updateScore();
   
-        if (correctPieces === totalPieces2) {
+        if (correctPieces === 1) {
           const defaults = { startVelocity: 40, spread: 300, ticks: 60, zIndex: 1000 };
         
-          // İlk animasyon: 3 saniye boyunca konfeti
+  
           const initialDuration = 2000;
           const initialAnimationEnd = Date.now() + initialDuration;
           const initialConfetti = setInterval(() => {
             if (Date.now() >= initialAnimationEnd) {
               clearInterval(initialConfetti);
         
-              // Popup'ı göster
+     
               document.getElementById('congrats-overlay').classList.remove('hidden');
         
-              // Popup gösterildikten sonra 5 saniye boyunca konfeti animasyonu devam eder
+  
               const continuousDuration = 5000;
               const continuousAnimationEnd = Date.now() + continuousDuration;
               const continuousConfetti = setInterval(() => {
@@ -254,7 +243,7 @@ pieces.on("mouseover", function(event, d) {
         
               return;
             }
-            // İlk animasyon sırasında konfeti üretimi
+  
             confetti(Object.assign({}, defaults, {
               particleCount: 60,
               origin: { x: Math.random(), y: Math.random() - 0.2 }
@@ -262,19 +251,19 @@ pieces.on("mouseover", function(event, d) {
           }, 200);
         }
         
-  // Yeniden başlatma butonuna tıklanıldığında sayfayı yenile:
+
 document.getElementById('restart-btn').addEventListener('click', function() {
   window.location.reload();
 });
 
-        // ✅ Parça doğru yerleştirildiğinde, arka plandaki il etiketini kaldırıyoruz.
+ 
         svg.selectAll(".province-label")
           .filter(function(dd) {
             return dd.properties.ilad === d.properties.ilad;
           })
           .remove();
   
-        // 🎉 Tüm parçalar yerleşince mesaj göster
+
         if (correctPieces === totalPieces2) {
           setTimeout(() => {
             alert("Tebrikler! Tüm illeri doğru yerleştirdiniz! 🎯");
@@ -285,11 +274,10 @@ document.getElementById('restart-btn').addEventListener('click', function() {
       d3.select(this).classed("active", false);
     });
   
-  // Parçaları sürükleme olayına bağla
+
   pieces.call(drag);
   
-  // Başlangıçta sayacı sıfırla
+
   updateScore();
   
-
 });
