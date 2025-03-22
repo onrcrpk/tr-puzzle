@@ -226,31 +226,40 @@ pieces.on("mouseover", function(event, d) {
         updateScore();
   
         if (correctPieces === totalPieces2) {
-          // Konfeti animasyonu için süre belirliyoruz (örneğin, 2 saniye)
-          const duration = 2000;
-          const animationEnd = Date.now() + duration;
-          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+          const defaults = { startVelocity: 40, spread: 300, ticks: 60, zIndex: 1000 };
         
-          const interval = setInterval(function() {
-            const timeLeft = animationEnd - Date.now();
+          // İlk animasyon: 3 saniye boyunca konfeti
+          const initialDuration = 2000;
+          const initialAnimationEnd = Date.now() + initialDuration;
+          const initialConfetti = setInterval(() => {
+            if (Date.now() >= initialAnimationEnd) {
+              clearInterval(initialConfetti);
         
-            if (timeLeft <= 0) {
-              clearInterval(interval);
+              // Popup'ı göster
+              document.getElementById('congrats-overlay').classList.remove('hidden');
+        
+              // Popup gösterildikten sonra 5 saniye boyunca konfeti animasyonu devam eder
+              const continuousDuration = 5000;
+              const continuousAnimationEnd = Date.now() + continuousDuration;
+              const continuousConfetti = setInterval(() => {
+                if (Date.now() >= continuousAnimationEnd) {
+                  clearInterval(continuousConfetti);
+                  return;
+                }
+                confetti(Object.assign({}, defaults, {
+                  particleCount: 60,
+                  origin: { x: Math.random(), y: Math.random() - 0.2 }
+                }));
+              }, 200);
+        
               return;
             }
-        
-            const particleCount = 50 * (timeLeft / duration);
-            // Rastgele bir konumdan konfeti başlatıyoruz
-            confetti(Object.assign({}, defaults, { 
-              particleCount, 
-              origin: { x: Math.random(), y: Math.random() - 0.2 } 
+            // İlk animasyon sırasında konfeti üretimi
+            confetti(Object.assign({}, defaults, {
+              particleCount: 60,
+              origin: { x: Math.random(), y: Math.random() - 0.2 }
             }));
-          }, 250);
-        
-          // Animasyon bitiminden sonra overlay'i göster
-          setTimeout(() => {
-            document.getElementById('congrats-overlay').classList.remove('hidden');
-          }, duration);
+          }, 200);
         }
         
   // Yeniden başlatma butonuna tıklanıldığında sayfayı yenile:
