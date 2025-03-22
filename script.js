@@ -115,6 +115,33 @@ d3.json("turkiye.geojson").then(data => {
   // Sürükleme olayları ve animasyon
   let offsetX, offsetY;
   const snapDistance = 20;
+  let correctPieces = 0;
+  const totalPieces2 = 81; // Türkiye'de 81 il var
+  
+  function updateScore() {
+    document.getElementById('score').textContent = `${correctPieces} / ${totalPieces2}`;
+  }
+
+  
+// Puzzle parçaları için hover efekti ekleme
+pieces.on("mouseover", function(event, d) {
+  if (!d3.select(this).classed("fixed")) {
+    d3.select(this).select("path")
+      .transition()
+      .duration(100)
+      .attr("fill", "#d1e8e2");  // Hover rengi
+  }
+})
+.on("mouseout", function(event, d) {
+  if (!d3.select(this).classed("fixed")) {
+    d3.select(this).select("path")
+      .transition()
+      .duration(100)
+      .attr("fill", "#ccc");  // Orijinal renk
+  }
+});
+
+
 
   const drag = d3.drag()
     .on("start", function(event) {
@@ -125,10 +152,38 @@ d3.json("turkiye.geojson").then(data => {
       offsetY = mouseY - parseFloat(translate[2]);
       d3.select(this).raise().classed("active", true);
     })
-    .on("drag", function(event) {
+    .on("drag", function(event, d) {
       if (d3.select(this).classed("fixed")) return;
-      d3.select(this).attr("transform", `translate(${event.sourceEvent.clientX - offsetX}, ${event.sourceEvent.clientY - offsetY})`);
+    
+      // Mevcut centroid konumunu al
+      const centroid = path.centroid(d);
+      const pieceBBox = d3.select(this).select("path").node().getBBox();
+    
+      const pieceWidth = pieceBBox.width;
+      const pieceHeight = pieceBBox.height;
+    
+      // Yeni konumu hesapla
+      let newX = event.sourceEvent.clientX - offsetX;
+      let newY = event.sourceEvent.clientY - offsetY;
+    
+      // Parça orijinal olarak centroid'e göre merkezlenmişti, bunu dikkate alarak offset'i ayarla
+      const offsetXCentroid = pieceWidth / 2;
+      const offsetYCentroid = pieceHeight / 2;
+    
+      // Çerçeve sınırlarını hesapla (hassas sınırlandırma)
+      const minX = frameMargin + offsetXCentroid;
+      const minY = frameMargin + offsetYCentroid;
+      const maxX = frameMargin + frameWidth - offsetXCentroid;
+      const maxY = frameMargin + frameHeight - offsetYCentroid;
+    
+      // Sınırlar dışına çıkmasını önle
+      newX = Math.max(minX, Math.min(maxX, newX));
+      newY = Math.max(minY, Math.min(maxY, newY));
+    
+      // Yeni transform değerini uygula
+      d3.select(this).attr("transform", `translate(${newX}, ${newY})`);
     })
+    
     .on("end", function(event, d) {
       if (d3.select(this).classed("fixed")) return;
       const [finalX, finalY] = path.centroid(d);
@@ -145,34 +200,87 @@ d3.json("turkiye.geojson").then(data => {
           .transition()
           .duration(200)
           .attr("transform", `translate(${finalX}, ${finalY}) scale(1)`);
-    
-        d3.select(this).select("path").attr("fill", "#2a9d8f");
+  
+          d3.select(this).select("path")
+          .attr("fill", "#43a047")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1.5);
+        
+
         d3.select(this).classed("fixed", true);
-    
+  
         d3.select(this).append("text")
-        .text(d.properties.ilad)
-        .attr("fill", "#ffffff")
-        .attr("font-size", "9px")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "middle")
-        .attr("transform", "translate(0,5)")
-        .style("user-select", "none")
-        .style("paint-order", "stroke")  // Önce kenarlığı çiz
-        .style("stroke", "#000")         // Kenarlık rengi (siyah)
-        .style("stroke-width", "1px");   // Kenarlık kalınlığı
-      
-    
-        // Parça doğru yerleştirildiğinde, arka plandaki il etiketini kaldırıyoruz.
+          .text(d.properties.ilad)
+          .attr("fill", "#ffffff")
+          .attr("font-size", "10px")
+          .attr("font-weight", "bold")
+          .attr("text-anchor", "middle")
+          .attr("transform", "translate(0,5)")
+          .style("user-select", "none")
+          .style("paint-order", "stroke")
+          .style("stroke", "#000")
+          .style("stroke-width", "1px");
+  
+        // ✅ Doğru parça yerine oturunca sayaç artıyor
+        correctPieces++;
+        updateScore();
+  
+        if (correctPieces === totalPieces2) {
+          // Konfeti animasyonu için süre belirliyoruz (örneğin, 2 saniye)
+          const duration = 2000;
+          const animationEnd = Date.now() + duration;
+          const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+        
+          const interval = setInterval(function() {
+            const timeLeft = animationEnd - Date.now();
+        
+            if (timeLeft <= 0) {
+              clearInterval(interval);
+              return;
+            }
+        
+            const particleCount = 50 * (timeLeft / duration);
+            // Rastgele bir konumdan konfeti başlatıyoruz
+            confetti(Object.assign({}, defaults, { 
+              particleCount, 
+              origin: { x: Math.random(), y: Math.random() - 0.2 } 
+            }));
+          }, 250);
+        
+          // Animasyon bitiminden sonra overlay'i göster
+          setTimeout(() => {
+            document.getElementById('congrats-overlay').classList.remove('hidden');
+          }, duration);
+        }
+        
+  // Yeniden başlatma butonuna tıklanıldığında sayfayı yenile:
+document.getElementById('restart-btn').addEventListener('click', function() {
+  window.location.reload();
+});
+
+        // ✅ Parça doğru yerleştirildiğinde, arka plandaki il etiketini kaldırıyoruz.
         svg.selectAll(".province-label")
           .filter(function(dd) {
             return dd.properties.ilad === d.properties.ilad;
           })
           .remove();
+  
+        // 🎉 Tüm parçalar yerleşince mesaj göster
+        if (correctPieces === totalPieces2) {
+          setTimeout(() => {
+            alert("Tebrikler! Tüm illeri doğru yerleştirdiniz! 🎯");
+          }, 500);
+        }
       }
-    
+  
       d3.select(this).classed("active", false);
     });
-    
-
+  
+  // Parçaları sürükleme olayına bağla
   pieces.call(drag);
+  
+  // Başlangıçta sayacı sıfırla
+  updateScore();
+  
+
 });
