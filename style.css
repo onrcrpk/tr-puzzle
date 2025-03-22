@@ -1,111 +1,115 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(135deg, #f7f6f3 0%, #e9ecef 100%);
-    margin: 0;
-    padding: 20px;
-  }
-  
-  .game-container {
-    text-align: center;
-    width: 100%;
-    max-width: 1200px;
-  }
-  
-  .game-title {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #333;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-  }
-  
-  .score-container {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #2a9d8f;
-    margin-bottom: 10px;
-  }
-  
-  /* Responsive map-container: oranı koruyarak tam genişlikte */
-  #map-container {
-    width: 100%;
-    max-width: 1200px;
-    aspect-ratio: 3 / 2;
-    border: 4px solid #aaa;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .score-container {
-    margin-top: 10px;
-    text-align: center;
-  }
-  
-  
-  #score {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #2a9d8f;
-    background-color: #f7f6f3;
-    padding: 8px 16px;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  
-  .overlay.hidden {
-    display: none;
-  }
-  
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #f7f6f3 0%, #e9ecef 100%);
+  margin: 0;
+  padding: 20px;
+}
+
+.game-container {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Yeni eklenen flex container */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem; /* Öğeler arasına boşluk ekler, ihtiyaca göre ayarlayın */
+  margin-bottom: 20px; /* Alt boşluk, diğer içeriklerle uyum için */
+}
+
+.game-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0; /* Varsayılan marginleri kaldırıyoruz */
+}
+
+.game-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0; /* Varsayılan marginleri kaldırıyoruz */
+}
+
+#map-container {
+  width: 100%;
+  max-width: 1200px;
+  aspect-ratio: 3 / 2;
+  border: 4px solid #aaa;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.score-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#score {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2a9d8f;
+  background-color: #f7f6f3;
+  padding: 8px 16px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.overlay.hidden {
+  display: none;
+}
 
 .congrats-content {
-  background: #fff;
-  padding: 30px 40px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+background: #fff;
+padding: 30px 40px;
+border-radius: 10px;
+text-align: center;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .congrats-content h2 {
-  margin-top: 0;
-  color: #2a9d8f;
+margin-top: 0;
+color: #2a9d8f;
 }
 
 .congrats-content p {
-  font-size: 1.2rem;
-  color: #333;
-  margin: 20px 0;
+font-size: 1.2rem;
+color: #333;
+margin: 20px 0;
 }
 
 #restart-btn {
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #2a9d8f;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+padding: 10px 20px;
+font-size: 1rem;
+background-color: #2a9d8f;
+color: #fff;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+transition: background-color 0.3s ease;
 }
 
 #restart-btn:hover {
-  background-color: #21867a;
+background-color: #21867a;
 }
