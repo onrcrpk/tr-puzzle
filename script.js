@@ -195,8 +195,12 @@ pieces.on("mouseover", function(event, d) {
           .attr("fill", "#43a047")
           .attr("stroke", "#fff")
           .attr("stroke-width", 1.5);
-        
 
+        
+            d3.select(this).classed("fixed", true)
+          .on("mouseover", null)
+          .on("mouseout", null);
+  
         d3.select(this).classed("fixed", true);
   
         d3.select(this).append("text")
