@@ -49,9 +49,21 @@ body {
 }
 
 .score-container {
-  margin-top: 15px;
+  margin-bottom: 15px;
   text-align: center;
 }
+
+#timer {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #e76f51;
+  background-color: #f7f6f3;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-left: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 
 #score {
   font-size: 1rem;
