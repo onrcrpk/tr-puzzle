@@ -182,6 +182,7 @@ pieces.on("mouseover", function(event, d) {
       const distance = Math.hypot(finalX - x, finalY - y);
     
       if (distance <= snapDistance) {
+        d3.select(this).interrupt();
         d3.select(this)
           .transition()
           .duration(300)
@@ -191,7 +192,7 @@ pieces.on("mouseover", function(event, d) {
           .duration(200)
           .attr("transform", `translate(${finalX}, ${finalY}) scale(1)`);
   
-          d3.select(this).select("path")
+          d3.select(this).select("path").interrupt()
           .attr("fill", "#43a047")
           .attr("stroke", "#fff")
           .attr("stroke-width", 1.5);
