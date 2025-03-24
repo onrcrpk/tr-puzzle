@@ -1,6 +1,8 @@
 // Harita boyutları
 const width = 1200;
 const height = 800;
+let timerStarted = false;
+
 
 const svg = d3.select("#map-container")
   .append("svg")
@@ -146,9 +148,17 @@ pieces.on("mouseover", function(event, d) {
       offsetY = mouseY - parseFloat(translate[2]);
       d3.select(this).raise().classed("active", true);
     })
+
+
     .on("drag", function(event, d) {
       if (d3.select(this).classed("fixed")) return;
     
+        // ⏱️ İlk drag işleminde zamanlayıcıyı başlat:
+  if (!timerStarted) {
+    startTimer();
+    timerStarted = true;
+  }
+
       // Mevcut centroid konumunu al
       const centroid = path.centroid(d);
       const pieceBBox = d3.select(this).select("path").node().getBBox();
@@ -299,6 +309,3 @@ function updateTimer() {
 function stopTimer() {
   clearInterval(timerInterval);
 }
-
-// Oyun başladığında zamanlayıcıyı başlat
-startTimer();
