@@ -17,19 +17,22 @@
       </h1>
             <p class="game-subtitle">Ülkemizin illerini doğru yerlere sürükleyerek Türkiye haritasını keşfedin!</p>
     </div>
-    <div id="map-container"></div>
     <div class="score-container">
       <span id="score">0 / 81</span>
-    </div>
+      <span id="timer">Süre: 00:00</span>
+    </div>    
+    <div id="map-container"></div>
+
   </div>
   
   <div id="congrats-overlay" class="overlay hidden">
     <div class="congrats-content">
       <h2>Tebrikler!</h2>
-      <p>Tüm şehirleri doğru yerleştirdiniz!</p>
+      <p id="congrats-message">Tüm şehirleri doğru yerleştirdiniz!</p>
       <button id="restart-btn">Yeniden Başlat</button>
     </div>
   </div>
+  
   
   <!-- D3.js CDN -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
