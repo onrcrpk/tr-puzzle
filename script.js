@@ -108,7 +108,7 @@ d3.json("turkiye.geojson").then(data => {
 
 
   let offsetX, offsetY;
-  const snapDistance = 20;
+  const snapDistance = 15;
   let correctPieces = 0;
   const totalPieces2 = 81;
   
@@ -174,113 +174,131 @@ pieces.on("mouseover", function(event, d) {
       d3.select(this).attr("transform", `translate(${newX}, ${newY})`);
     })
     
-    .on("end", function(event, d) {
-      if (d3.select(this).classed("fixed")) return;
-      const [finalX, finalY] = path.centroid(d);
-      const currentTransform = d3.select(this).attr("transform").match(/translate\(([^,]+),([^)]+)\)/);
-      const [x, y] = [parseFloat(currentTransform[1]), parseFloat(currentTransform[2])];
-      const distance = Math.hypot(finalX - x, finalY - y);
-    
-      if (distance <= snapDistance) {
-        d3.select(this).interrupt();
-        d3.select(this)
-          .transition()
-          .duration(300)
-          .ease(d3.easeCubicOut)
-          .attr("transform", `translate(${finalX}, ${finalY}) scale(1.05)`)
-          .transition()
-          .duration(200)
-          .attr("transform", `translate(${finalX}, ${finalY}) scale(1)`);
-  
-          d3.select(this).select("path").interrupt()
-          .attr("fill", "#43a047")
-          .attr("stroke", "#fff")
-          .attr("stroke-width", 1.5);
 
-        d3.select(this).classed("fixed", true);
+ // "drag" işlemi sonu fonksiyonu kapanışı
+.on("end", function(event, d) {
+  if (d3.select(this).classed("fixed")) return;
+  const [finalX, finalY] = path.centroid(d);
+  const currentTransform = d3.select(this).attr("transform").match(/translate\(([^,]+),([^)]+)\)/);
+  const [x, y] = [parseFloat(currentTransform[1]), parseFloat(currentTransform[2])];
+  const distance = Math.hypot(finalX - x, finalY - y);
 
-          d3.select(this).on("mouseover", null).on("mouseout", null);
+  if (distance <= snapDistance) {
+    d3.select(this).interrupt();
+    d3.select(this)
+      .transition()
+      .duration(300)
+      .ease(d3.easeCubicOut)
+      .attr("transform", `translate(${finalX}, ${finalY}) scale(1.05)`)
+      .transition()
+      .duration(200)
+      .attr("transform", `translate(${finalX}, ${finalY}) scale(1)`);
 
-  
-        d3.select(this).append("text")
-          .text(d.properties.ilad)
-          .attr("fill", "#ffffff")
-          .attr("font-size", "10px")
-          .attr("font-weight", "bold")
-          .attr("text-anchor", "middle")
-          .attr("transform", "translate(0,5)")
-          .style("user-select", "none")
-          .style("paint-order", "stroke")
-          .style("stroke", "#000")
-          .style("stroke-width", "1px");
-  
-        correctPieces++;
-        updateScore();
-  
-        if (correctPieces === totalPieces2) {
-          const defaults = { startVelocity: 40, spread: 300, ticks: 60, zIndex: 1000 };
-        
-  
-          const initialDuration = 2000;
-          const initialAnimationEnd = Date.now() + initialDuration;
-          const initialConfetti = setInterval(() => {
-            if (Date.now() >= initialAnimationEnd) {
-              clearInterval(initialConfetti);
-        
-     
-              document.getElementById('congrats-overlay').classList.remove('hidden');
-        
-  
-              const continuousDuration = 5000;
-              const continuousAnimationEnd = Date.now() + continuousDuration;
-              const continuousConfetti = setInterval(() => {
-                if (Date.now() >= continuousAnimationEnd) {
-                  clearInterval(continuousConfetti);
-                  return;
-                }
-                confetti(Object.assign({}, defaults, {
-                  particleCount: 60,
-                  origin: { x: Math.random(), y: Math.random() - 0.2 }
-                }));
-              }, 200);
-        
-              return;
-            }
-  
-            confetti(Object.assign({}, defaults, {
-              particleCount: 60,
-              origin: { x: Math.random(), y: Math.random() - 0.2 }
-            }));
-          }, 200);
-        }
-        
+    d3.select(this).select("path").interrupt()
+      .attr("fill", "#43a047")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5);
 
+    d3.select(this).classed("fixed", true);
+    d3.select(this).on("mouseover", null).on("mouseout", null);
+
+    d3.select(this).append("text")
+      .text(d.properties.ilad)
+      .attr("fill", "#ffffff")
+      .attr("font-size", "10px")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "middle")
+      .attr("transform", "translate(0,5)")
+      .style("user-select", "none")
+      .style("paint-order", "stroke")
+      .style("stroke", "#000")
+      .style("stroke-width", "1px");
+
+    correctPieces++;
+    updateScore();
+
+    svg.selectAll(".province-label")
+      .filter(function(dd) {
+        return dd.properties.ilad === d.properties.ilad;
+      })
+      .remove();
+
+      if (correctPieces === 1) {
+        stopTimer(); // Süreyi durdur
+        const elapsed = Date.now() - startTime;
+        const totalSeconds = Math.floor(elapsed / 1000);
+        const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+        const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+      
+        const defaults = { startVelocity: 40, spread: 300, ticks: 60, zIndex: 1000 };
+        const initialDuration = 2000;
+        const initialAnimationEnd = Date.now() + initialDuration;
+        const initialConfetti = setInterval(() => {
+          if (Date.now() >= initialAnimationEnd) {
+            clearInterval(initialConfetti);
+      
+            // Tebrik ekranını göster ve süreyi yaz:
+            document.getElementById('congrats-message').textContent = 
+              `Tüm şehirleri ${minutes}:${seconds} sürede doğru yerleştirdiniz! 🎯`;
+            document.getElementById('congrats-overlay').classList.remove('hidden');
+      
+            const continuousDuration = 5000;
+            const continuousAnimationEnd = Date.now() + continuousDuration;
+            const continuousConfetti = setInterval(() => {
+              if (Date.now() >= continuousAnimationEnd) {
+                clearInterval(continuousConfetti);
+                return;
+              }
+              confetti(Object.assign({}, defaults, {
+                particleCount: 60,
+                origin: { x: Math.random(), y: Math.random() - 0.2 }
+              }));
+            }, 200);
+            return;
+          }
+      
+          confetti(Object.assign({}, defaults, {
+            particleCount: 60,
+            origin: { x: Math.random(), y: Math.random() - 0.2 }
+          }));
+        }, 200);
+      }
+    }      
+
+  d3.select(this).classed("active", false);
+}); // Drag-end fonksiyonu burada biter.
+
+//❗️ Bu iki satır drag fonksiyonun DIŞINDA, ama d3.json içinde olmalı:
+pieces.call(drag);
+updateScore();
+
+// Yeniden başlat düğmesi fonksiyonu burada olacak
 document.getElementById('restart-btn').addEventListener('click', function() {
   window.location.reload();
 });
 
- 
-        svg.selectAll(".province-label")
-          .filter(function(dd) {
-            return dd.properties.ilad === d.properties.ilad;
-          })
-          .remove();
-  
+}); // d3.json fonksiyonu burada biter.
 
-        if (correctPieces === totalPieces2) {
-          setTimeout(() => {
-            alert("Tebrikler! Tüm illeri doğru yerleştirdiniz! 🎯");
-          }, 500);
-        }
-      }
-  
-      d3.select(this).classed("active", false);
-    });
-  
+// ❗️ Zamanlayıcı Fonksiyonları EN DIŞTA global tanımlanmalı ❗️
+let startTime;
+let timerInterval;
 
-  pieces.call(drag);
-  
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+}
 
-  updateScore();
-  
-});
+function updateTimer() {
+  const elapsed = Date.now() - startTime;
+  const totalSeconds = Math.floor(elapsed / 1000);
+  const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('timer').textContent = `Süre: ${minutes}:${seconds}`;
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+// Oyun başladığında zamanlayıcıyı başlat
+startTimer();
