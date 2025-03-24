@@ -233,7 +233,7 @@ pieces.on("mouseover", function(event, d) {
       })
       .remove();
 
-      if (correctPieces === totalPieces2) {
+      if (correctPieces === 1) {
         stopTimer(); // Süreyi durdur
         const elapsed = Date.now() - startTime;
         const totalSeconds = Math.floor(elapsed / 1000);
@@ -278,12 +278,18 @@ pieces.on("mouseover", function(event, d) {
   d3.select(this).classed("active", false);
 }); // Drag-end fonksiyonu burada biter.
 
+//❗️ Bu iki satır drag fonksiyonun DIŞINDA, ama d3.json içinde olmalı:
 pieces.call(drag);
 updateScore();
+
+// Yeniden başlat düğmesi fonksiyonu burada olacak
 document.getElementById('restart-btn').addEventListener('click', function() {
   window.location.reload();
 });
 
+}); // d3.json fonksiyonu burada biter.
+
+// ❗️ Zamanlayıcı Fonksiyonları EN DIŞTA global tanımlanmalı ❗️
 let startTime;
 let timerInterval;
 
