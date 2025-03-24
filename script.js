@@ -233,7 +233,7 @@ pieces.on("mouseover", function(event, d) {
       })
       .remove();
 
-      if (correctPieces === 1) {
+      if (correctPieces === totalPieces2) {
         stopTimer(); // Süreyi durdur
         const elapsed = Date.now() - startTime;
         const totalSeconds = Math.floor(elapsed / 1000);
