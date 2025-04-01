@@ -64,7 +64,7 @@ d3.json("turkiye.geojson").then(data => {
     .append("g")
     .attr("class", "piece");
 
-  const frameOffset = 80;
+  const frameOffset = 45;
   const totalPieces = shuffledData.length;
   const perimeter = 2 * (frameWidth + frameHeight);
   const step = perimeter / totalPieces;
