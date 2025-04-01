@@ -247,7 +247,7 @@ pieces.on("mouseover", function(event, d) {
           if (Date.now() >= initialAnimationEnd) {
             clearInterval(initialConfetti);
       
-            // Tebrik ekranını göster ve süreyi yaz:
+            
             document.getElementById('congrats-message').textContent = 
               `Tüm şehirleri ${minutes}:${seconds} sürede doğru yerleştirdiniz! 🎯`;
             document.getElementById('congrats-overlay').classList.remove('hidden');
@@ -276,9 +276,9 @@ pieces.on("mouseover", function(event, d) {
     }      
 
   d3.select(this).classed("active", false);
-}); // Drag-end fonksiyonu burada biter.
+}); 
 
-//❗️ Bu iki satır drag fonksiyonun DIŞINDA, ama d3.json içinde olmalı:
+
 pieces.call(drag);
 updateScore();
 
@@ -287,9 +287,9 @@ document.getElementById('restart-btn').addEventListener('click', function() {
   window.location.reload();
 });
 
-}); // d3.json fonksiyonu burada biter.
+}); 
 
-// ❗️ Zamanlayıcı Fonksiyonları EN DIŞTA global tanımlanmalı ❗️
+
 let startTime;
 let timerInterval;
 
